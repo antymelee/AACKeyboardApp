@@ -1,9 +1,18 @@
 // main.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 void main() {
-  runApp(const AACKeyboardApp());
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Force landscape mode
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeRight,
+    DeviceOrientation.landscapeLeft,
+  ]).then((_) {
+    runApp(const AACKeyboardApp());
+  });
 }
 
 class AACKeyboardApp extends StatelessWidget {
@@ -30,6 +39,7 @@ class _AACKeyboardHomePageState extends State<AACKeyboardHomePage> {
   final TextEditingController _controller = TextEditingController();
   final FlutterTts _flutterTts = FlutterTts();
 
+  // Define keys for the keyboard
   final List<String> _keys = [
     'Q',
     'W',
@@ -67,7 +77,7 @@ class _AACKeyboardHomePageState extends State<AACKeyboardHomePage> {
     }
   }
 
-  // Handle key press
+  // Handle key presses
   void _onKeyPressed(String key) {
     setState(() {
       if (key == 'Space') {
@@ -78,14 +88,14 @@ class _AACKeyboardHomePageState extends State<AACKeyboardHomePage> {
     });
   }
 
-  // Clear text
+  // Clear the text area
   void _clearText() {
     setState(() {
       _controller.clear();
     });
   }
 
-  // Backspace functionality
+  // Remove the last character
   void _backspace() {
     setState(() {
       if (_controller.text.isNotEmpty) {
@@ -103,7 +113,7 @@ class _AACKeyboardHomePageState extends State<AACKeyboardHomePage> {
       ),
       body: Column(
         children: [
-          // Top Section: Expanding text area, Speak, Backspace, Clear
+          // Top Section: Expanding text area and buttons
           Expanded(
             flex: 2,
             child: Column(
@@ -127,46 +137,43 @@ class _AACKeyboardHomePageState extends State<AACKeyboardHomePage> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: _speak,
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 50),
-                          ),
-                          child: const Text(
-                            "Speak",
-                            style: TextStyle(fontSize: 20.0),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: _backspace,
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _speak,
                         style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(100, 50),
+                          minimumSize: const Size(double.infinity, 50),
                         ),
                         child: const Text(
-                          "←",
+                          "Speak",
                           style: TextStyle(fontSize: 20.0),
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: _clearText,
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(100, 50),
-                        ),
-                        child: const Text(
-                          "Clear",
-                          style: TextStyle(fontSize: 20.0),
-                        ),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: _backspace,
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(100, 50),
                       ),
-                    ],
-                  ),
+                      child: const Text(
+                        "←",
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: _clearText,
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(100, 50),
+                      ),
+                      child: const Text(
+                        "Clear",
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -177,10 +184,10 @@ class _AACKeyboardHomePageState extends State<AACKeyboardHomePage> {
             child: GridView.builder(
               padding: const EdgeInsets.all(10.0),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 10, // Number of keys per row
-                childAspectRatio: 1.5,
-                crossAxisSpacing: 5.0,
-                mainAxisSpacing: 5.0,
+                crossAxisCount: 8, // Adjust for larger buttons
+                childAspectRatio: 2.0,
+                crossAxisSpacing: 10.0,
+                mainAxisSpacing: 10.0,
               ),
               itemCount: _keys.length,
               itemBuilder: (context, index) {
